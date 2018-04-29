@@ -28,7 +28,8 @@ namespace eBayPulse
             app.Run(async (context) =>
             {
                 Hit hit = new Hit();
-                await context.Response.WriteAsync(hit.Response);
+                string response = hit.Response;
+                await context.Response.WriteAsync(response);
             });
         }
     }
