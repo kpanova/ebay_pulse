@@ -1,4 +1,4 @@
-.messageEncryptorForm {
+.messageeBayPulseForm {
     max-width: 700px;
     background-color: #fff;
     margin: 100px auto;
@@ -7,39 +7,39 @@
     color: #4c4e56;
 }
 
-.messageEncryptorForm label {
+.messageeBayPulseForm label {
     width: 100%;
     margin-bottom: 10px;
 }
 
-.messageEncryptorForm .heading h1 {
+.messageeBayPulseForm .heading h1 {
     text-align: center;
     font-family: 'Open Sans', sans-serif;
     color: #4c4e56;
 }
 
-.messageEncryptorForm .meassaging {
+.messageeBayPulseForm .meassaging {
     font-size: 18px;
     padding: 10px 25px;
     margin-top: 20px;
     position: relative;
 }
 
-.messageEncryptorForm .meassaging .form-group {
+.messageeBayPulseForm .meassaging .form-group {
     float: left;
     margin-bottom: 15px;
 }
 
-.messageEncryptorForm #message-field {
+.messageeBayPulseForm #message-field {
     width: 100%;
 }
 
-.messageEncryptorForm #encrypt-now {
+.messageeBayPulseForm #getItem-now {
     width: 100%;
     margin-top: 25px;
 }
 
-.messageEncryptorForm .meassaging .btn {
+.messageeBayPulseForm .meassaging .btn {
     width: 100%;
     margin-top: 3px;
     font-size: 24px;

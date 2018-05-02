@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     $(function () {
-        $("#btnEncrypt").click(
+        $("#btnGetItem").click(
             function () {
                 var msg = $("#message").val();
                 if (msg == "") {
