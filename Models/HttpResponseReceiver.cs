@@ -20,6 +20,9 @@ namespace eBayPulse
         private HttpResponseMessage response;
         private Dictionary<string, string> authData;
         public string id;
+        public static Dictionary<long,string> ExceptionsList = new Dictionary<long, string>(){
+            {-1, "This item was not found."}
+        };
         public string Response
         {
             get

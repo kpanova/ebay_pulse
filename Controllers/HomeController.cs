@@ -24,7 +24,7 @@ namespace eBayPulse.Controllers
             HttpResponseReceiver hit = new HttpResponseReceiver(){id = msg};
             string response = hit.Response;
             Item item = new Item(msg, response);   
-            return item.HitCount.ToString();
+            return (item.HitCount < 0 ? HttpResponseReceiver.ExceptionsList[item.HitCount] : item.HitCount.ToString());
         }
     }
 }
