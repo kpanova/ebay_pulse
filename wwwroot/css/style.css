@@ -1,0 +1,52 @@
+.messageeBayPulseForm {
+    max-width: 700px;
+    background-color: #fff;
+    margin: 100px auto;
+    overflow: hidden;
+    padding: 25px;
+    color: #4c4e56;
+}
+
+.messageeBayPulseForm label {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.messageeBayPulseForm .heading h1 {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    color: #4c4e56;
+}
+
+.messageeBayPulseForm .meassaging {
+    font-size: 18px;
+    padding: 10px 25px;
+    margin-top: 20px;
+    position: relative;
+}
+
+.messageeBayPulseForm .meassaging .form-group {
+    float: left;
+    margin-bottom: 15px;
+}
+
+.messageeBayPulseForm #message-field {
+    width: 100%;
+}
+
+.messageeBayPulseForm #getItem-now {
+    width: 100%;
+    margin-top: 25px;
+}
+
+.messageeBayPulseForm .meassaging .btn {
+    width: 100%;
+    margin-top: 3px;
+    font-size: 24px;
+    background-color: #2ec4a5;
+    color: white;
+}
+
+.transparent {
+    opacity: 0.2;
+}
