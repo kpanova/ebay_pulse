@@ -1,0 +1,19 @@
+[Unit]
+Description=eBayPulse
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ebaypulse/bin
+
+User=ebaypulse
+Group=ebaypulse
+
+OOMScoreAdjust=-1000
+
+ExecStart=/usr/bin/dotnet /opt/ebaypulse/bin/eBayPulse.dll
+TimeoutSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target 
