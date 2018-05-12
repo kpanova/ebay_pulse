@@ -15,8 +15,7 @@ namespace eBayPulse.Controllers
         public IActionResult Index()
         {
             return View();
-        }
-        
+        }       
 
         [HttpPost]
         public string Index(string msg)
