@@ -14,6 +14,7 @@ namespace eBayPulse.Controllers
         // GET: /HelloWorld/
         public IActionResult Index()
         {
+            DBConnector.getConnection().context.Database.EnsureCreated();
             return View();
         }       
 
@@ -25,5 +26,6 @@ namespace eBayPulse.Controllers
             Item item = new Item(msg, response);   
             return (item.HitCount < 0 ? HttpResponseReceiver.ExceptionsList[item.HitCount] : item.HitCount.ToString());
         }
+
     }
 }
