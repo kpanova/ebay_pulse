@@ -31,7 +31,7 @@ namespace eBayPulse
                 XDocument xdoc = XDocument.Load(new StringReader(response));
                 return xdoc.Root?.Elements()?.Where(y => y.Name.LocalName == this.ToString().Split('.')?.Last())?.Last()?.Elements()?.Where(x => x.Name.LocalName == itemName)?.Last()?.Value;
             }
-            catch(InvalidOperationException e)
+            catch(InvalidOperationException /*e*/)
             {
                 return "-1";
             }
