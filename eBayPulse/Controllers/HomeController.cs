@@ -4,14 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using eBayPulse.Tools;
 
 
 namespace eBayPulse.Controllers
 {
     public class HomeController : Controller
     {
-        // 
-        // GET: /HelloWorld/
         public IActionResult Index()
         {
             DBConnector.getConnection().context.Database.EnsureCreated();
@@ -21,10 +20,18 @@ namespace eBayPulse.Controllers
         [HttpPost]
         public string Index(string msg)
         {
-            HttpResponseReceiver hit = new HttpResponseReceiver(){id = msg};
-            string response = hit.Response;
-            Item item = new Item(msg, response);   
-            return (item.HitCount < 0 ? HttpResponseReceiver.ExceptionsList[item.HitCount] : item.HitCount.ToString());
+            eBayItemIdCleaner eBayItemIdCleaner = new eBayItemIdCleaner(msg);
+            if(eBayItemIdCleaner.IsValid)
+            {
+                HttpResponseReceiver hit = new HttpResponseReceiver(){id = eBayItemIdCleaner.Value};
+                string response = hit.Response;
+                Item item = new Item(msg, response);
+                return (item.HitCount < 0 ? HttpResponseReceiver.ExceptionsList[item.HitCount] : item.HitCount.ToString());
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
     }

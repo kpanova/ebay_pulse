@@ -22,19 +22,45 @@ namespace eBayPulse
     {       
         public long HitCount {get; set;}
         public Item(string ItemId, string response){
-            eBayId = ItemId;
+            eBayId = getItem(response, "ItemID");
             HitCount = Convert.ToInt64(getItem(response, "HitCount"));
         }
         public string getItem(string response, string itemName)
         {
             try{
                 XDocument xdoc = XDocument.Load(new StringReader(response));
-                return xdoc.Root?.Elements()?.Where(y => y.Name.LocalName == this.ToString().Split('.')?.Last())?.Last()?.Elements()?.Where(x => x.Name.LocalName == itemName)?.Last()?.Value;
+                return reqGetItem(xdoc.Root?.Elements().ToList(), itemName);
             }
             catch(InvalidOperationException /*e*/)
             {
                 return "-1";
             }
         }
+        public string reqGetItem(List<XElement> xElements, string itemName)
+        {
+            try{
+                foreach(var xElement in xElements)
+                {
+                    if(xElement.Name.LocalName == itemName)
+                    {
+                        return xElement.Value;
+                    }
+                    else if (xElement.HasElements)
+                    {
+                        var res = reqGetItem(xElement.Elements().ToList(), itemName);
+                        if(res != string.Empty)
+                        {
+                            return res;
+                        }
+                    }
+                }
+                return string.Empty;
+            }
+            catch(InvalidOperationException /*e*/)
+            {
+                return "-1";
+            }
+        }
+
     }    
 }
