@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.IO;
-namespace eBayPulse
+
+namespace eBayPulse.Models
 {
-    public partial class Item : IDataReciver
+    public partial class Item
     {
         public int Id {get; set;}
         public string eBayId {get; set;}
         public string Name {get; set;}
-        public int UpdatePeriod {get; set;}
+        public long UpdatePeriod_Sec {get; set;}
 
         [InverseProperty("Item")]
         public virtual ICollection<Pulse> Pulses {get; set;}
@@ -20,11 +21,11 @@ namespace eBayPulse
 
         public Item() { }
     }
-    public class Pulse 
+    public partial class Pulse 
     {
         public int Id {get; set;}
         public int? ItemId {get; set;}
-        public int Time {get; set;}
+        public long Unix_Time {get; set;}
         public int Views {get; set;}
         public int Watchers {get; set;}
 
@@ -38,7 +39,7 @@ namespace eBayPulse
     {
         public int Id {get; set;}
         public int? ItemId {get; set;}
-        public int Time {get; set;}
+        public long Unix_Time {get; set;}
         
         public string Text {get; set;}
 

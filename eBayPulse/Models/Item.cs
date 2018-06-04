@@ -1,66 +1,31 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Net;
-using System.Xml.Serialization;
-using System.Xml;
-using System.Xml.Schema;
+using System;
 using System.IO;
-using System.Xml.Linq;
+using eBayPulse.Tools;
 
-namespace eBayPulse
+namespace eBayPulse.Models
 {
     public partial class Item
-    {       
-        public long HitCount {get; set;}
-        public Item(string ItemId, string response){
-            eBayId = getItem(response, "ItemID");
-            HitCount = Convert.ToInt64(getItem(response, "HitCount"));
-        }
-        public string getItem(string response, string itemName)
+    {
+        /**
+        public int Id {get; set;}
+        public string eBayId {get; set;}
+        public string Name {get; set;}
+        public int UpdatePeriod_Sec {get; set;}
+
+        [InverseProperty("Item")]
+        public virtual ICollection<Pulse> Pulses {get; set;}
+
+        [InverseProperty("Item")]
+        public virtual ICollection<Note> Notes {get; set;}
+         * */
+        public Item(eBayItemData eBayItemData)
         {
-            try{
-                XDocument xdoc = XDocument.Load(new StringReader(response));
-                return reqGetItem(xdoc.Root?.Elements().ToList(), itemName);
-            }
-            catch(InvalidOperationException /*e*/)
-            {
-                return "-1";
-            }
-        }
-        public string reqGetItem(List<XElement> xElements, string itemName)
-        {
-            try{
-                foreach(var xElement in xElements)
-                {
-                    if(xElement.Name.LocalName == itemName)
-                    {
-                        return xElement.Value;
-                    }
-                    else if (xElement.HasElements)
-                    {
-                        var res = reqGetItem(xElement.Elements().ToList(), itemName);
-                        if(res != string.Empty)
-                        {
-                            return res;
-                        }
-                    }
-                }
-                return string.Empty;
-            }
-            catch(InvalidOperationException /*e*/)
-            {
-                return "-1";
-            }
+            this.eBayId = eBayItemData.ItemID;
+            this.Name = eBayItemData.Name;
+            this.UpdatePeriod_Sec = 60;
         }
 
-    }    
+        
+    }
 }

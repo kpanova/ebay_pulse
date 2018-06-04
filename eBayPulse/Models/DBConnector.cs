@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data;
 
-namespace eBayPulse
+namespace eBayPulse.Models
 {
     public class DBConnector
     {
