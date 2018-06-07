@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using eBayPulse.Tools;
 using eBayPulse.Models;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace eBayPulse.Controllers
 {
     public class HomeController : Controller
     {
+        eBayPulseContext context => DBConnector.getConnection().context;
         public IActionResult Index()
         {
-            DBConnector.getConnection().context.Database.EnsureCreated();
+            context.Database.EnsureCreated();
+            ViewData["items"] = context.Item.Include(c => c.Pulses);
             return View();
         }       
 
@@ -26,12 +28,12 @@ namespace eBayPulse.Controllers
             {                
                 eBayItemData eBayItem = new eBayItemData(eBayItemId.Value);
                 Item item = new Item(eBayItem);
-                DBConnector.getConnection().context.Item.Add(item);
-                DBConnector.getConnection().context.SaveChanges();
+                context.Item.Add(item);
+                context.SaveChanges();
                 Pulse newPulse = new Pulse(eBayItem, item);
-                DBConnector.getConnection().context.Pulse.Add(newPulse);
-                DBConnector.getConnection().context.SaveChanges();
-                return item.Pulses.FirstOrDefault().Views.ToString();// < 0 ? HttpRequestReceiver.ExceptionsList[item.HitCount] : item.HitCount.ToString());
+                context.Pulse.Add(newPulse);
+                context.SaveChanges();
+                return (item.Id +";"+ item.Name + ";"+ item.Pulses.LastOrDefault().Unix_Time.ConvertFromUnixTimestamp() +";"+ item.Pulses.LastOrDefault().Views.ToString());
             }
             else
             {

@@ -1,5 +1,9 @@
-﻿@{
+﻿@using Microsoft.EntityFrameworkCore;
+@using System.Linq;
+@using eBayPulse.Tools;
+@{
     ViewData["Title"] = "Home Page";
+    var items =  eBayPulse.Models.DBConnector.getConnection().context.Item.Include(c => c.Pulses);
 }
 
 <!DOCTYPE html>
@@ -30,16 +34,44 @@
                     <h1>eBayPulse</h1>
                 </div>
                 <div class="meassaging">
-                        <div class="form-group" id="message-field">
+                        <!--div class="form-group" id="message-field">
                             <label for="Message">Insert Id of your item here</label>
                             <input type="text" class="form-control" id="message" placeholder="Item link">
                         </div>
 
                         <div class="form-group" id="getItem-now">
                             <button type="submit" class="btn btn-default" id="btnGetItem">Add</button>
+                        </div-->
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="message" placeholder="Item link">
+                            <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default" id="btnGetItem">Add</button>
+                            </span>
                         </div>
                         <div class="form-group">
-                            <textarea id="TextArea1" class="form-control" rows="5" style="max-width:100%;" cols="80" placeholder="Hint" readonly></textarea>
+                            <ul class="list-group" id="ItemsList">
+                                
+                               
+                            </ul>
+                            <div class="table-responsive">
+                                <table class="table" id="ItemsTable">
+                                    <thead>
+                                        <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Time</th>
+                                        <th>Views</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+                                        @foreach (var item in items)
+                                        {
+                                            var time =  item.Pulses.LastOrDefault().Unix_Time.ConvertFromUnixTimestamp();
+                                            <tr><td>@item.Id</td><td> @item.Name</td><td>@time</td><td>@item.Pulses.LastOrDefault().Views.ToString()</td></tr>
+                                        }
+                                    </tbody>
+                            </table>
+                            </div>
                         </div>
                 </div>
             </div>

@@ -26,9 +26,9 @@ namespace eBayPulse.Models
         public string stringResponse
         {
             get
-            {                
+            {
                 if(client != null)
-                {                    
+                {
                     ProcessRepositories().Wait();
                 }
                 if(response.IsSuccessStatusCode){

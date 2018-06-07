@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace eBayPulse.Models
 {
@@ -13,24 +14,29 @@ namespace eBayPulse.Models
         public string Name {get; set;}
         public long UpdatePeriod_Sec {get; set;}
 
-        [InverseProperty("Item")]
+        //[InverseProperty("Item")]
         public virtual ICollection<Pulse> Pulses {get; set;}
 
-        [InverseProperty("Item")]
-        public virtual ICollection<Note> Notes {get; set;}
+        //[InverseProperty("Item")]
+        public ICollection<Note> Notes {get; set;}
 
-        public Item() { }
+        public Item() 
+        { 
+            Pulses = new List<Pulse>();//eBayPulse.Models.DBConnector.getConnection().context.Pulse.Where(x => x.ItemId == Id).ToList();
+            Notes = new List<Note>();
+        }
     }
     public partial class Pulse 
     {
         public int Id {get; set;}
+        [ForeignKey("Item")]
         public int? ItemId {get; set;}
         public long Unix_Time {get; set;}
         public int Views {get; set;}
         public int Watchers {get; set;}
-
-        [InverseProperty("Pulses")]
-        public virtual Item Item {get; set;}
+        
+        //[InverseProperty("Pulses")]
+        public Item Item {get; set;}
 
         public Pulse() { }
     }
@@ -38,13 +44,14 @@ namespace eBayPulse.Models
     public class Note
     {
         public int Id {get; set;}
+        [ForeignKey("Item")]
         public int? ItemId {get; set;}
         public long Unix_Time {get; set;}
         
         public string Text {get; set;}
-
-        [InverseProperty("Notes")]
-        public virtual Item Item {get; set;}
+        
+        //[InverseProperty("Notes")]
+        public Item Item {get; set;}
         public Note() { }
 
     }    
@@ -72,6 +79,13 @@ namespace eBayPulse.Models
             );
             
             optionsBuilder.UseSqlite("filename=" + databasePath);
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Pulse>()
+            .HasOne(g => g.Item)
+            .WithMany(e => e.Pulses)
+            .HasForeignKey(c => c.ItemId); 
         }
     }
 }

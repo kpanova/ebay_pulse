@@ -8,10 +8,16 @@
                     return;
                 }
                 var message = { msg: msg };
-                $.post("/Home/Index", message, onAjaxSuccess);
+                $.post("/Home/Index", message, addToItemsList);
             });
     });
 });
-function onAjaxSuccess(data) {
-    $("#TextArea1").val($("#TextArea1").val() + data + "\n")
-}
+function addToItemsList(str) {
+    var data = str.split(';');
+    var formatData = '';
+    data.forEach(function(element) {
+        formatData += "<td>" + element + "</td>";
+      });
+      formatData = "<tr>"+ formatData + "</tr>"
+    $("#ItemsTable > tbody").append(formatData);
+};
