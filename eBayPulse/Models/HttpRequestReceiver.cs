@@ -12,9 +12,9 @@ using System.Text;
 using System.Net;
 using System.IO;
 
-namespace eBayPulse
+namespace eBayPulse.Models
 {
-    public class HttpResponseReceiver
+    public class HttpRequestReceiver
     {
         private readonly HttpClient client = new HttpClient();
         private HttpResponseMessage response;
@@ -23,7 +23,7 @@ namespace eBayPulse
         public static Dictionary<long,string> ExceptionsList = new Dictionary<long, string>(){
             {-1, "This item was not found."}
         };
-        public string Response
+        public string stringResponse
         {
             get
             {                
@@ -32,7 +32,9 @@ namespace eBayPulse
                     ProcessRepositories().Wait();
                 }
                 if(response.IsSuccessStatusCode){
-                    return response.Content.ReadAsStringAsync().Result;
+                    var result = response.Content.ReadAsStringAsync().Result;
+                    ResponseTime = (new DateTimeOffset(DateTime.Now)).ToUnixTimeSeconds();
+                    return result;
                 }
                 else
                 {
@@ -40,6 +42,7 @@ namespace eBayPulse
                 }
             }
         }
+        public long ResponseTime {get; private set;}
         private async Task ProcessRepositories( )
         {
             getToken();
@@ -53,12 +56,13 @@ namespace eBayPulse
             client.DefaultRequestHeaders.Add("X-EBAY-API-CALL-NAME", "GetItem");
             client.DefaultRequestHeaders.Add("X-EBAY-API-SITEID", "0");
             string xml =               
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>/n"+
-                "<GetItemRequest xmlns=\"urn:ebay:apis:eBLBaseComponents\">/n"+
-                    "<RequesterCredentials>/n"+
-                    "<eBayAuthToken>" + authData["eBayAuthToken"] + "</eBayAuthToken>/n"+
-                    "</RequesterCredentials>/n"+
-                    "<ItemID>" + id + "</ItemID>/n"+
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>/n" +
+                "<GetItemRequest xmlns=\"urn:ebay:apis:eBLBaseComponents\">/n" +
+                    "<IncludeWatchCount>True</IncludeWatchCount>/n" +
+                    "<RequesterCredentials>/n" +
+                    "<eBayAuthToken>" + authData["eBayAuthToken"] + "</eBayAuthToken>/n" +
+                    "</RequesterCredentials>/n" +
+                    "<ItemID>" + id + "</ItemID>/n" +
                     "</GetItemRequest>";
 
             ByteArrayContent byteArrayContent = new ByteArrayContent(Encoding.ASCII.GetBytes(xml));

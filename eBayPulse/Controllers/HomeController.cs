@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using eBayPulse.Tools;
+using eBayPulse.Models;
 
 
 namespace eBayPulse.Controllers
@@ -20,13 +21,17 @@ namespace eBayPulse.Controllers
         [HttpPost]
         public string Index(string msg)
         {
-            eBayItemIdCleaner eBayItemIdCleaner = new eBayItemIdCleaner(msg);
-            if(eBayItemIdCleaner.IsValid)
-            {
-                HttpResponseReceiver hit = new HttpResponseReceiver(){id = eBayItemIdCleaner.Value};
-                string response = hit.Response;
-                Item item = new Item(msg, response);
-                return (item.HitCount < 0 ? HttpResponseReceiver.ExceptionsList[item.HitCount] : item.HitCount.ToString());
+            eBayItemIdCleaner eBayItemId = new eBayItemIdCleaner(msg);
+            if(eBayItemId.IsValid)
+            {                
+                eBayItemData eBayItem = new eBayItemData(eBayItemId.Value);
+                Item item = new Item(eBayItem);
+                DBConnector.getConnection().context.Item.Add(item);
+                DBConnector.getConnection().context.SaveChanges();
+                Pulse newPulse = new Pulse(eBayItem, item);
+                DBConnector.getConnection().context.Pulse.Add(newPulse);
+                DBConnector.getConnection().context.SaveChanges();
+                return item.Pulses.FirstOrDefault().Views.ToString();// < 0 ? HttpRequestReceiver.ExceptionsList[item.HitCount] : item.HitCount.ToString());
             }
             else
             {
