@@ -1,0 +1,21 @@
+[ req ]
+prompt                  = no
+distinguished_name      = server_distinguished_name
+req_extensions          = v3_req
+
+[ server_distinguished_name ]
+commonName              = localhost
+stateOrProvinceName     = Tatarstan
+countryName             = RU
+emailAddress            = dmitry@bravikov.pro
+organizationName        = bravikov
+organizationalUnitName  = bravikov
+
+[ v3_req ]
+basicConstraints        = CA:FALSE
+keyUsage                = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName          = @alt_names
+
+[ alt_names ]
+DNS.1 = localhost
+IP.1 = 127.0.0.1

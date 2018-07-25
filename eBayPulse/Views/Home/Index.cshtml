@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>WebeBayPulse</title>
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/project.js"></script>
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="~/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon-16x16.png">
+    <link rel="manifest" href="~/site.webmanifest">
+    <link rel="mask-icon" href="~/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="messageeBayPulseForm">
+                <div class="heading">
+                    <h1>eBayPulse</h1>
+                </div>
+                <div class="meassaging">
+                        <div class="form-group" id="message-field">
+                            <label for="Message">Insert Id of your item here</label>
+                            <input type="text" class="form-control" id="message" placeholder="Item link">
+                        </div>
+
+                        <div class="form-group" id="getItem-now">
+                            <button type="submit" class="btn btn-default" id="btnGetItem">Add</button>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="TextArea1" class="form-control" rows="5" style="max-width:100%;" cols="80" placeholder="Hint" readonly></textarea>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>        
+</body>
+</html>
