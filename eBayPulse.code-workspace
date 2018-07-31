@@ -10,5 +10,8 @@
 			"path": "eBayPulse\\Jobs"
 		}
 	],
-	"settings": {}
+	"settings":
+	{
+		"dotnet-test-explorer.testProjectPath": "../Tests"
+	}
 }
