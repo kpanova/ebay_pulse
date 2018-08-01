@@ -17,12 +17,12 @@ namespace eBayPulse.Models
         [InverseProperty("Pulses")]
         public virtual Item Item {get; set;}
          */
-        public Pulse(eBayItemData eBayItemData, Item item)
+        public Pulse(eBayItemDataHelper eBayItemData, Item item)
         {
             Item = item;
             Watchers = eBayItemData.WatchCount;
-            Views = (int)eBayItemData.HitCount;
-            Unix_Time = eBayItemData.responseTime;
+            Views = eBayItemData.HitCount;
+            Unix_Time = eBayItemData.ResponseTime;
         }
 
     }

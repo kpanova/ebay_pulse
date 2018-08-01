@@ -25,8 +25,9 @@ namespace eBayPulse.Controllers
         {
             eBayItemIdCleaner eBayItemId = new eBayItemIdCleaner(msg);
             if(eBayItemId.IsValid)
-            {                
-                eBayItemData eBayItem = new eBayItemData(eBayItemId.Value);
+            {
+                eBayItemDataHelper eBayItem = new eBayItemDataHelper(eBayItemId.Value);
+                eBayItem.GeteBayItemDataHelperAsync();
                 Item item = new Item(eBayItem);
                 context.Item.Add(item);
                 context.SaveChanges();
@@ -40,6 +41,5 @@ namespace eBayPulse.Controllers
                 return string.Empty;
             }
         }
-
     }
 }

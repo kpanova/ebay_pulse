@@ -23,13 +23,13 @@ namespace eBayPulse.Models
         public static Dictionary<long,string> ExceptionsList = new Dictionary<long, string>(){
             {-1, "This item was not found."}
         };
-        public string stringResponse
+        public string StringResponse
         {
             get
             {
                 if(client != null)
                 {
-                    ProcessRepositories().Wait();
+                    GetResponse().Wait();
                 }
                 if(response.IsSuccessStatusCode){
                     var result = response.Content.ReadAsStringAsync().Result;
@@ -43,9 +43,9 @@ namespace eBayPulse.Models
             }
         }
         public long ResponseTime {get; private set;}
-        private async Task ProcessRepositories( )
+        private async Task GetResponse( )
         {
-            getToken();
+            GetToken();
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("text/xml"));
@@ -70,7 +70,7 @@ namespace eBayPulse.Models
 
             response = await stringTask;
         }
-        private void getToken(){
+        private void GetToken(){
             authData = new Dictionary<string, string>();
             using (StreamReader  token = new StreamReader("Token.txt"))
             {

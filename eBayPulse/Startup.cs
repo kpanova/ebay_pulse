@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using eBayPulse.Jobs;
 
 namespace eBayPulse
 {
@@ -33,7 +34,7 @@ namespace eBayPulse
             }
 
             app.UseStaticFiles();
-
+            GetItemScheduler.Start();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

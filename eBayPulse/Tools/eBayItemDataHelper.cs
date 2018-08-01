@@ -4,38 +4,47 @@ using System.Linq;
 using System.IO;
 using System.Xml.Linq;
 using eBayPulse.Models;
+using System.Threading.Tasks;
 
 namespace eBayPulse.Tools
 {
-    public class eBayItemData
+    public class eBayItemDataHelper
     {
         public string ItemID {get; set;}
         public string Name {get; set;}
         public int HitCount {get; set;}
         public int WatchCount {get; set;}
-        public long responseTime {get; set;}
+        public long ResponseTime {get; set;}
         private string response;       
-        public eBayItemData(string ItemId){
-            HttpRequestReceiver httpRequest = new HttpRequestReceiver(){id = ItemId};
-            response = httpRequest.stringResponse;
-            responseTime = httpRequest.ResponseTime;
-            ItemID = getItem("ItemID");
-            HitCount = Convert.ToInt32(getItem("HitCount"));
-            Name = getItem("Title");
-            //WatchCount = Convert.ToInt32(getItem("WatchCount"));
+        public eBayItemDataHelper(string ItemId){
+            this.ItemID = ItemId;
         }
-        public string getItem(string itemName)
+        public async void GeteBayItemDataHelperAsync()
+        {
+            await GeteBayItemDataHelper();
+        }
+        public Task GeteBayItemDataHelper()
+        {
+            HttpRequestReceiver httpRequest = new HttpRequestReceiver() { id = ItemID };
+            response = httpRequest.StringResponse;
+            ResponseTime = httpRequest.ResponseTime;
+            ItemID = GetItem("ItemID");
+            HitCount = Convert.ToInt32(GetItem("HitCount"));
+            Name = GetItem("Title");
+            return Task.CompletedTask;
+        }
+        public string GetItem(string itemName)
         {
             try{
                 XDocument xdoc = XDocument.Load(new StringReader(response));
-                return reqGetItem(xdoc.Root?.Elements().ToList(), itemName);
+                return ReqGetItem(xdoc.Root?.Elements().ToList(), itemName);
             }
             catch(InvalidOperationException)
             {
                 return "-1";
             }
         }
-        public string reqGetItem(List<XElement> xElements, string itemName)
+        public string ReqGetItem(List<XElement> xElements, string itemName)
         {
             try{
                 foreach(var xElement in xElements)
@@ -46,7 +55,7 @@ namespace eBayPulse.Tools
                     }
                     else if (xElement.HasElements)
                     {
-                        var res = reqGetItem(xElement.Elements().ToList(), itemName);
+                        var res = ReqGetItem(xElement.Elements().ToList(), itemName);
                         if(res != string.Empty)
                         {
                             return res;
@@ -55,7 +64,7 @@ namespace eBayPulse.Tools
                 }
                 return string.Empty;
             }
-            catch(InvalidOperationException /*e*/)
+            catch(InvalidOperationException)
             {
                 return "-1";
             }

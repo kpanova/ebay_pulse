@@ -19,7 +19,7 @@ namespace eBayPulse.Models
         [InverseProperty("Item")]
         public virtual ICollection<Note> Notes {get; set;}
          * */
-        public Item(eBayItemData eBayItemData)
+        public Item(eBayItemDataHelper eBayItemData)
         {
             this.eBayId = eBayItemData.ItemID;
             this.Name = eBayItemData.Name;
