@@ -2,7 +2,6 @@
 @using System.Linq;
 @using eBayPulse.Tools;
 @{
-    ViewData["Title"] = "Home Page";
     var items =  eBayPulse.Models.DBConnector.getConnection().context.Item.Include(c => c.Pulses);
 }
 
@@ -34,14 +33,6 @@
                     <h1>eBayPulse</h1>
                 </div>
                 <div class="meassaging">
-                        <!--div class="form-group" id="message-field">
-                            <label for="Message">Insert Id of your item here</label>
-                            <input type="text" class="form-control" id="message" placeholder="Item link">
-                        </div>
-
-                        <div class="form-group" id="getItem-now">
-                            <button type="submit" class="btn btn-default" id="btnGetItem">Add</button>
-                        </div-->
                         <div class="input-group">
                             <input type="text" class="form-control" id="message" placeholder="Item link">
                             <span class="input-group-btn">
@@ -67,7 +58,7 @@
                                         @foreach (var item in items)
                                         {
                                             var time =  item.Pulses.LastOrDefault().Unix_Time.ConvertFromUnixTimestamp();
-                                            <tr><td>@item.Id</td><td> @item.Name</td><td>@time</td><td>@item.Pulses.LastOrDefault().Views.ToString()</td></tr>
+                                            <tr><td>@item.Id</td><td><a href="/Home/Item?eBayId=@item.eBayId.ToString()">@item.Name</a></td><td>@time</td><td>@item.Pulses.LastOrDefault().Views.ToString()</td></tr>
                                         }
                                     </tbody>
                             </table>
