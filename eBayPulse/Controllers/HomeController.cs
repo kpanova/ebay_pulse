@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using eBayPulse.Tools;
 using eBayPulse.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Encodings.Web;
 
 namespace eBayPulse.Controllers
 {
@@ -17,6 +18,7 @@ namespace eBayPulse.Controllers
         {
             context.Database.EnsureCreated();
             ViewData["items"] = context.Item.Include(c => c.Pulses);
+            ViewData["Title"] = "eBayPulse";
             return View();
         }       
 
@@ -40,6 +42,15 @@ namespace eBayPulse.Controllers
             {
                 return string.Empty;
             }
+        }
+
+        public IActionResult Item(string eBayId)
+        {
+            var items = DBConnector.getConnection().context.Item.Where(x => x.eBayId.Equals(eBayId));
+            ViewData["Title"] = items.FirstOrDefault().Name;
+            ViewData["ItemeBayId"] = eBayId;
+            return View();
+            //return HtmlEncoder.Default.Encode(items.FirstOrDefault().Pulses.LastOrDefault().Views.ToString());
         }
     }
 }

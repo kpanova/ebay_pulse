@@ -1,0 +1,63 @@
+﻿@using Microsoft.EntityFrameworkCore;
+@using System.Linq;
+@using eBayPulse.Tools;
+@using eBayPulse.Models;
+@{
+
+    var Item = DBConnector.getConnection().context.Item.Where(x => x.eBayId.Equals((string)ViewData["ItemeBayId"])).FirstOrDefault();
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>WebeBayPulse</title>
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/project.js"></script>
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="~/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon-16x16.png">
+    <link rel="manifest" href="~/site.webmanifest">
+    <link rel="mask-icon" href="~/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="messageeBayPulseForm">
+                <div class="heading">
+                    <h1>eBayPulse</h1>
+                </div>
+                <div class="meassaging">
+                    <div class="form-group">
+                        <ul class="list-group" id="ItemsList"></ul>
+                        <div class="table-responsive">
+                            <table class="table" id="ItemsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Views</th>
+                                    </tr>
+                                </thead>
+                                @foreach (var pulse in Item.Pulses)
+                                {
+                                    var time = pulse.Unix_Time.ConvertFromUnixTimestamp();
+                                    <tr><td>@time</td><td>@pulse.Views.ToString()</td></tr>
+                                }
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
