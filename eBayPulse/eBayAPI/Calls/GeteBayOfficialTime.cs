@@ -2,10 +2,10 @@ using eBayPulse.Tools;
 
 namespace eBayPulse.eBayApi.Call
 {
-    public class FetchToken: Call
+    public class GeteBayOfficialTime: Call
     {
-        public FetchToken(Context context)
-            : base(context, CallName.FetchToken)
+        public GeteBayOfficialTime(Context context)
+            : base(context, CallName.GeteBayOfficialTime)
         {
             CallSpecificInputXml = $"";
         }

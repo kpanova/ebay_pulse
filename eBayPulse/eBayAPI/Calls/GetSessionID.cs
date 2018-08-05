@@ -1,6 +1,6 @@
 using eBayPulse.Tools;
 
-namespace eBayPulse.eBayApi
+namespace eBayPulse.eBayApi.Call
 {
     public class GetSessionID: Call
     {

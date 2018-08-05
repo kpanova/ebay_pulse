@@ -1,7 +1,7 @@
 using eBayPulse.Tools;
 using System;
 
-namespace eBayPulse.eBayApi
+namespace eBayPulse.eBayApi.Call
 {
     public class GetItem: Call
     {

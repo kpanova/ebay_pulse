@@ -17,6 +17,7 @@ namespace eBayPulse.eBayApi
     public enum CallName
     {
         FetchToken,
+        GeteBayOfficialTime,
         GetItem,
         GetSessionID,
     }
@@ -102,6 +103,29 @@ namespace eBayPulse.eBayApi
         public string Token = null;
     }
 
+    public class SignInPage
+    {
+        static public string GetUrl(Gateway gateway, string ruName, string sessionId)
+        {
+            if (string.IsNullOrEmpty(ruName) || string.IsNullOrEmpty(sessionId))
+            {
+                return null;
+            }
+
+            var domen = Request.GatewayDomen(gateway);
+            if (string.IsNullOrEmpty(domen)) {
+                return null;
+            }
+
+            return $"https://signin.{domen}/ws/eBayISAPI.dll?SignIn&RuName={ruName}&SessID={sessionId}";
+        }
+
+        static public string GetUrl(Context context, string sessionId)
+        {
+            return GetUrl(context.Gateway, context.RuName, sessionId);
+        }
+    }
+
     public class Request
     {
         public Request(Gateway gateway, Headers header, string inputXml)
@@ -129,12 +153,21 @@ namespace eBayPulse.eBayApi
 
         private string GetApiUrl()
         {
-            switch (Gateway)
+            var domen = GatewayDomen(Gateway);
+            if (string.IsNullOrEmpty(domen)) {
+                return null;
+            }
+            return $"https://api.{domen}/ws/api.dll";
+        }
+
+        static public string GatewayDomen(Gateway gateway)
+        {
+            switch (gateway)
             {
                 case Gateway.Sandbox:
-                    return "https://api.sandbox.ebay.com/ws/api.dll";
+                    return "sandbox.ebay.com";
                 case Gateway.Production:
-                    return "https://api.ebay.com/ws/api.dll";
+                    return "ebay.com";
             }
             return null;
         }
@@ -175,82 +208,84 @@ namespace eBayPulse.eBayApi
         }
     }
 
-    public abstract class Call
-    {
-        public Call(Context context, CallName callName)
+    namespace Call {
+        public abstract class Call
         {
-            Context = context;
-            CallName = callName;
-        }
-
-        public bool exec()
-        {
-            Headers headers = new Headers(
-                Context.CompatibilityLevel,
-                CallName,
-                Context.SiteId,
-                Context.Keys
-            );
-
-            string inputXml = string.Format(
-                baseXml(),
-                headers.CallName.ToString(),
-                RequesterCredentials(),
-                CallSpecificInputXml
-            );
-
-            var request = new Request(Context.Gateway, headers, inputXml);
-            request.exec().Wait();
-            var response = request.response;
-
-            if (response == null)
+            public Call(Context context, CallName callName)
             {
-                return false;
+                Context = context;
+                CallName = callName;
             }
 
-            if (!response.IsSuccessStatusCode)
+            public bool exec()
             {
-                return false;
+                Headers headers = new Headers(
+                    Context.CompatibilityLevel,
+                    CallName,
+                    Context.SiteId,
+                    Context.Keys
+                );
+
+                string inputXml = string.Format(
+                    baseXml(),
+                    headers.CallName.ToString(),
+                    RequesterCredentials(),
+                    CallSpecificInputXml
+                );
+
+                var request = new Request(Context.Gateway, headers, inputXml);
+                request.exec().Wait();
+                var response = request.response;
+
+                if (response == null)
+                {
+                    return false;
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return false;
+                }
+
+                var output = response.Content.ReadAsStringAsync().Result;
+
+                if (!ParseOutput(new XmlReader(output)))
+                {
+                    ErrorMessage
+                        = $"Error when parsing output. Output: '{output}'.";
+                    return false;
+                }
+
+                return true;
             }
 
-            var output = response.Content.ReadAsStringAsync().Result;
+            public string ErrorMessage { get; protected set; }
 
-            if (!ParseOutput(new XmlReader(output)))
+            protected abstract bool ParseOutput(XmlReader xmlReader);
+
+            protected string CallSpecificInputXml { private get; set; }
+
+            private CallName CallName;
+            private Context Context;
+
+            private string baseXml()
             {
-                ErrorMessage
-                    = $"Error when parsing output. Output: '{output}'.";
-                return false;
+                return ""
+                    + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                    + "<{0}Request xmlns=\"urn:ebay:apis:eBLBaseComponents\">\n"
+                    + "{1}\n"
+                    + "{2}\n"
+                    + "</{0}Request>\n";
             }
 
-            return true;
-        }
-
-        public string ErrorMessage { get; protected set; }
-
-        protected abstract bool ParseOutput(XmlReader xmlReader);
-
-        protected string CallSpecificInputXml { private get; set; }
-
-        private CallName CallName;
-        private Context Context;
-
-        private string baseXml()
-        {
-            return ""
-                + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-                + "<{0}Request xmlns=\"urn:ebay:apis:eBLBaseComponents\">\n"
-                + "{1}\n"
-                + "{2}\n"
-                + "</{0}Request>\n";
-        }
-
-        private string RequesterCredentials()
-        {
-            if (Context.Token != null) {
-                var token = $"<eBayAuthToken>{Context.Token}</eBayAuthToken>";
-                return $"<RequesterCredentials>{token}</RequesterCredentials>";
+            private string RequesterCredentials()
+            {
+                if (Context.Token != null) {
+                    var token = $"<eBayAuthToken>{Context.Token}</eBayAuthToken>";
+                    return $"<RequesterCredentials>{token}</RequesterCredentials>";
+                }
+                return string.Empty;
             }
-            return string.Empty;
         }
     }
 }

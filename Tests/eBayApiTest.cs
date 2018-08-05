@@ -1,4 +1,5 @@
 using eBayPulse.eBayApi;
+using eBayPulse.eBayApi.Call;
 using Xunit;
 using System.IO;
 using System;
@@ -51,6 +52,57 @@ namespace eBayPulse.Tests
             Assert.True(
                 Math.Abs((getItem.Timestamp - DateTime.Now).Seconds) < 2
             );
+        }
+
+        [Fact]
+        public void GetSignInPageUrlTest()
+        {
+            Assert.True(
+                SignInPage.GetUrl(Gateway.Production, "", "abcdefg")
+                == null
+            );
+
+            Assert.True(
+                SignInPage.GetUrl(Gateway.Production, "", null)
+                == null
+            );
+
+            Assert.True(
+                SignInPage.GetUrl(Gateway.Production, "123456", "")
+                == null
+            );
+
+            Assert.True(
+                SignInPage.GetUrl(Gateway.Production, "", "")
+                == null
+            );
+
+            Assert.True(
+                SignInPage.GetUrl(Gateway.Production, "123456", "abcdefg")
+                == "https://signin.ebay.com/ws/eBayISAPI.dll?SignIn&RuName=123456&SessID=abcdefg"
+            );
+
+            Assert.True(
+                SignInPage.GetUrl(Gateway.Sandbox, "123456", "abcdefg")
+                == "https://signin.sandbox.ebay.com/ws/eBayISAPI.dll?SignIn&RuName=123456&SessID=abcdefg"
+            );
+
+            Context context = new Context();
+
+            context.RuName = "123456";
+            context.Gateway = Gateway.Production;
+
+            Assert.True(
+                SignInPage.GetUrl(context, "abcdefg")
+                == "https://signin.ebay.com/ws/eBayISAPI.dll?SignIn&RuName=123456&SessID=abcdefg"
+            );
+
+            context.Gateway = Gateway.Sandbox;
+            Assert.True(
+                SignInPage.GetUrl(context, "abcdefg")
+                == "https://signin.sandbox.ebay.com/ws/eBayISAPI.dll?SignIn&RuName=123456&SessID=abcdefg"
+            );
+
         }
     }
 }
