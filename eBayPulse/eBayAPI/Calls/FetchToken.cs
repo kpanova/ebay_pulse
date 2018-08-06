@@ -13,7 +13,7 @@ namespace eBayPulse.eBayApi.Call
         public string eBayAuthToken {get; private set;}
         public string HardExpirationTime {get; private set;}
 
-        protected override bool ParseOutput(XmlReader xmlReader)
+        protected override bool ParseSpecificOutput(XmlReader xmlReader)
         {
             ErrorMessage = "Not implemented.";
             return false;

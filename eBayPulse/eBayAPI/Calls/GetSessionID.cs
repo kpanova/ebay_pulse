@@ -12,7 +12,7 @@ namespace eBayPulse.eBayApi.Call
 
         public string SessionId { get; private set; }
 
-        protected override bool ParseOutput(XmlReader xmlReader)
+        protected override bool ParseSpecificOutput(XmlReader xmlReader)
         {
             SessionId = xmlReader.GetValue("SessionID");
             if (SessionId == null)

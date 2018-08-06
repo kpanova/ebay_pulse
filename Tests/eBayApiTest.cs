@@ -49,9 +49,8 @@ namespace eBayPulse.Tests
 
             Assert.True(getItem.exec(), getItem.ErrorMessage);
             Assert.True(getItem.ItemId == itemId);
-            Assert.True(
-                Math.Abs((getItem.Timestamp - DateTime.Now).Seconds) < 2
-            );
+            var timeDiff = getItem.StandardFields.Timestamp - DateTime.Now;
+            Assert.True(Math.Abs(timeDiff.Seconds) < 2);
         }
 
         [Fact]

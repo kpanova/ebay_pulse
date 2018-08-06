@@ -208,13 +208,33 @@ namespace eBayPulse.eBayApi
         }
     }
 
-    namespace Call {
+    namespace Call
+    {
+        public enum Ack
+        {
+            CustomCode,
+            Failure,
+            PartialFailure,
+            Success,
+            Warning,
+        }
+
+        public class StandardFields
+        {
+            public DateTime Timestamp { get; set; }
+            public Ack Ack { get; set; }
+        }
+
         public abstract class Call
         {
+            public StandardFields StandardFields { get; private set; }
+            public string ErrorMessage { get; protected set; }
+
             public Call(Context context, CallName callName)
             {
                 Context = context;
                 CallName = callName;
+                StandardFields = new StandardFields();
             }
 
             public bool exec()
@@ -256,17 +276,61 @@ namespace eBayPulse.eBayApi
                     return false;
                 }
 
+                if (StandardFields.Ack != Ack.Success)
+                {
+                    ErrorMessage
+                        = $"The call was not successful. Output: '{output}'.";
+                    return false;
+                }
+
                 return true;
             }
 
-            public string ErrorMessage { get; protected set; }
-
-            protected abstract bool ParseOutput(XmlReader xmlReader);
+            protected abstract bool ParseSpecificOutput(XmlReader xmlReader);
 
             protected string CallSpecificInputXml { private get; set; }
 
             private CallName CallName;
             private Context Context;
+
+            private bool ParseStandardOutput(XmlReader xmlReader)
+            {
+                DateTime timestamp;
+                DateTime.TryParse(xmlReader.GetValue("Timestamp"), out timestamp);
+                StandardFields.Timestamp = timestamp;
+
+                var ack = xmlReader.GetValue("Ack");
+
+                if (string.IsNullOrEmpty(ack)) {
+                    return false;
+                }
+
+                try
+                {
+                    StandardFields.Ack = (Ack)Enum.Parse(typeof(Ack), ack);
+                }
+                catch(ArgumentException)
+                {
+                    StandardFields.Ack = Ack.CustomCode;
+                }
+
+                return true;
+            }
+
+            private bool ParseOutput(XmlReader xmlReader)
+            {
+                if (!ParseStandardOutput(xmlReader))
+                {
+                    return false;
+                }
+
+                if (!ParseSpecificOutput(xmlReader))
+                {
+                    return false;
+                }
+
+                return true;
+            }
 
             private string baseXml()
             {
@@ -280,7 +344,8 @@ namespace eBayPulse.eBayApi
 
             private string RequesterCredentials()
             {
-                if (Context.Token != null) {
+                if (Context.Token != null)
+                {
                     var token = $"<eBayAuthToken>{Context.Token}</eBayAuthToken>";
                     return $"<RequesterCredentials>{token}</RequesterCredentials>";
                 }
