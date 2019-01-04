@@ -2,6 +2,8 @@
 @using System.Linq;
 @using eBayPulse.Tools;
 @using eBayPulse.Models;
+@using Highsoft.Web.Mvc.Stocks
+
 @{
 
     var Item = DBConnector.getConnection().context.Item.Where(x => x.eBayId.Equals((string)ViewData["ItemeBayId"])).FirstOrDefault();
@@ -15,6 +17,8 @@
     <title>WebeBayPulse</title>
     <script src="~/js/jquery-3.3.1.min.js"></script>
     <script src="~/js/project.js"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/bootstrap.min.css" rel="stylesheet" />
 
@@ -36,23 +40,40 @@
                 </div>
                 <div class="meassaging">
                     <div class="form-group">
-                        <ul class="list-group" id="ItemsList"></ul>
-                        <div class="table-responsive">
-                            <table class="table" id="ItemsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Time</th>
-                                        <th>Views</th>
-                                    </tr>
-                                </thead>
-                                @foreach (var pulse in Item.Pulses)
+                        @(Html.Highsoft().GetHighstock(
+                        new Highstock
+                        {
+                            RangeSelector = new RangeSelector
+                            {
+                                Selected = 1
+                            },
+                            Title = new Title
+                            {
+                                Text = "Views of " + ViewData["Title"]
+                            },
+                            Series = new List<Series>
+                            {
+                                        new LineSeries
+                                        {
+                                            Data = ViewData["viewsData"] as List<LineSeriesData>,
+                                            Name = "Views",
+                                            Tooltip = new LineSeriesTooltip
+                                            {
+                                                ValueDecimals = 2
+                                            }
+                                        }
+                            },
+                            PlotOptions = new PlotOptions
+                            {
+                                Series = new PlotOptionsSeries
                                 {
-                                    var time = pulse.Unix_Time.ConvertFromUnixTimestamp();
-                                    <tr><td>@time</td><td>@pulse.Views.ToString()</td></tr>
+                                    TurboThreshold = 1000
                                 }
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                            }
+
+                        },
+                        "chart"
+                        ))
                     </div>
                 </div>
             </div>

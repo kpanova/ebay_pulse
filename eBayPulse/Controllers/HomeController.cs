@@ -8,6 +8,7 @@ using eBayPulse.Tools;
 using eBayPulse.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Encodings.Web;
+using Highsoft.Web.Mvc.Stocks;
 
 namespace eBayPulse.Controllers
 {
@@ -49,6 +50,9 @@ namespace eBayPulse.Controllers
             var items = DBConnector.getConnection().context.Item.Where(x => x.eBayId.Equals(eBayId));
             ViewData["Title"] = items.FirstOrDefault().Name;
             ViewData["ItemeBayId"] = eBayId;
+            List<LineSeriesData> viewsData = new List<LineSeriesData>();
+            items.FirstOrDefault().Pulses.ToList().ForEach(x => viewsData.Add(new LineSeriesData { X = Convert.ToDouble(x.Unix_Time)*1000, Y = x.Views }));
+            ViewData["viewsData"] = viewsData;
             return View();
             //return HtmlEncoder.Default.Encode(items.FirstOrDefault().Pulses.LastOrDefault().Views.ToString());
         }
