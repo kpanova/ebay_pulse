@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using eBayPulse.Tools;
 using eBayPulse.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Encodings.Web;
 using Highsoft.Web.Mvc.Stocks;
 
 namespace eBayPulse.Controllers

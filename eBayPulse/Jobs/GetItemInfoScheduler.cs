@@ -1,11 +1,7 @@
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using eBayPulse.Models;
 using eBayPulse.Tools;
-using Microsoft.Extensions.Hosting;
 using Quartz.Impl;
 
 namespace eBayPulse.Jobs
@@ -17,7 +13,7 @@ namespace eBayPulse.Jobs
             IScheduler scheduler = await StdSchedulerFactory.GetDefaultScheduler();
             await scheduler.Start();
 
-            IJobDetail job = JobBuilder.Create<ItemGetter>().Build();
+            IJobDetail job = JobBuilder.Create<ItemDataGetter>().Build();
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
@@ -30,7 +26,7 @@ namespace eBayPulse.Jobs
         }
     }
     
-    public class ItemGetter : IJob
+    public class ItemDataGetter : IJob
     {
         public async Task Execute(IJobExecutionContext context)
         {
